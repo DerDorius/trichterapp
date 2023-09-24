@@ -63,8 +63,8 @@ class _TrichterConnectButtonState extends State<TrichterConnectButton> {
               await WiFiScan.instance.canStartScan(askPermissions: true);
           if (can == CanStartScan.yes) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: const Text('Suche nach Trichter'),
+              const SnackBar(
+                content: Text('Suche nach Trichter'),
               ),
             );
             // start full scan async-ly
@@ -99,8 +99,8 @@ class _TrichterConnectButtonState extends State<TrichterConnectButton> {
                           });
                         }
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: const Text('Verbunden mit Trichter'),
+                          const SnackBar(
+                            content: Text('Verbunden mit Trichter'),
                             showCloseIcon: true,
                           ),
                         );
@@ -117,8 +117,8 @@ class _TrichterConnectButtonState extends State<TrichterConnectButton> {
       } else {
         print("WiFi could not be enabled");
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text(
+          const SnackBar(
+            content: Text(
                 'WLAN musste erst aktiviert werden. Bitte nochmal versuchen'),
           ),
         );

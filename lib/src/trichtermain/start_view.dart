@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:trichterapp/src/widgets/connect_button.dart';
+import 'package:trichterapp/src/widgets/trichter_summary_card.dart';
 
 import '../settings/settings_view.dart';
 import 'sample_item.dart';
-import 'trichterdetail.dart';
 
 /// Displays a list of SampleItems.
 class StartView extends StatelessWidget {
@@ -46,55 +46,23 @@ class StartView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16.0),
-                  gradient: LinearGradient(
-                    colors: [Color(0xFF4A148C), Color(0xFF880E4F)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.5),
-                      spreadRadius: 3,
-                      blurRadius: 7,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
-                ),
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Letzter Trichter:',
-                      style: TextStyle(
-                        fontSize: 24.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    SizedBox(height: 12.0),
-                    Text(
-                      'Trichter Informationen hier...',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
+              TrichterSummaryCard(
+                titleText: 'Letzter Trichter von ',
+                trichterName: 'Darius',
+                dauerText: '4.1 Sekunden',
+                maxDurchflussText: '250.0 ml/s',
+                avgDurchflussText: '150.0 ml/s',
+                mengeText: '2.5 Liter',
               ),
-              SizedBox(height: 24.0),
-              Text(
+              const SizedBox(height: 24.0),
+              const Text(
                 'Scoreboards:',
                 style: TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               InkWell(
                 onTap: () {
                   // Hier kannst du zur Schnellster Trichter Seite navigieren.
@@ -102,7 +70,7 @@ class StartView extends StatelessWidget {
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16.0),
-                    gradient: LinearGradient(
+                    gradient: const LinearGradient(
                       colors: [Color(0xFFE65100), Color(0xFFFFAB40)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
@@ -112,12 +80,12 @@ class StartView extends StatelessWidget {
                         color: Colors.black.withOpacity(0.5),
                         spreadRadius: 3,
                         blurRadius: 7,
-                        offset: Offset(0, 3),
+                        offset: const Offset(0, 3),
                       ),
                     ],
                   ),
                   padding: const EdgeInsets.all(16.0),
-                  child: Column(
+                  child: const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
@@ -140,7 +108,7 @@ class StartView extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 12.0),
+              const SizedBox(height: 12.0),
               InkWell(
                 onTap: () {
                   // Hier kannst du zur Durchschnittliche Trichter Geschwindigkeit Seite navigieren.
@@ -148,7 +116,7 @@ class StartView extends StatelessWidget {
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16.0),
-                    gradient: LinearGradient(
+                    gradient: const LinearGradient(
                       colors: [Color(0xFF004D40), Color(0xFF00BFA5)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
@@ -158,12 +126,12 @@ class StartView extends StatelessWidget {
                         color: Colors.black.withOpacity(0.5),
                         spreadRadius: 3,
                         blurRadius: 7,
-                        offset: Offset(0, 3),
+                        offset: const Offset(0, 3),
                       ),
                     ],
                   ),
                   padding: const EdgeInsets.all(16.0),
-                  child: Column(
+                  child: const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
@@ -186,7 +154,7 @@ class StartView extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 12.0),
+              const SizedBox(height: 12.0),
               InkWell(
                 onTap: () {
                   // Hier kannst du zur Maximalgeschwindigkeit Seite navigieren.
@@ -194,7 +162,7 @@ class StartView extends StatelessWidget {
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16.0),
-                    gradient: LinearGradient(
+                    gradient: const LinearGradient(
                       colors: [Color(0xFF311B92), Color(0xFF651FFF)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
@@ -204,12 +172,12 @@ class StartView extends StatelessWidget {
                         color: Colors.black.withOpacity(0.5),
                         spreadRadius: 3,
                         blurRadius: 7,
-                        offset: Offset(0, 3),
+                        offset: const Offset(0, 3),
                       ),
                     ],
                   ),
                   padding: const EdgeInsets.all(16.0),
-                  child: Column(
+                  child: const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(

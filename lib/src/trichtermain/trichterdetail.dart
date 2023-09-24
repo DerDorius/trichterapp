@@ -131,7 +131,7 @@ class _TrichterDetailState extends State<TrichterDetail> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -139,7 +139,7 @@ class _TrichterDetailState extends State<TrichterDetail> {
                       size: 100,
                       count: trichterModel.mengeInLiter,
                       title: "Liter"),
-                  Divider(
+                  const Divider(
                     height: 20,
                     thickness: 5,
                     indent: 20,
