@@ -1,30 +1,13 @@
-# trichterapp
+## Beer Funneling Highscore App
 
-A new Flutter project.
+The Beer Funneling Highscore App is a mobile application developed with Flutter that allows users to track and display highscores in various beer funneling categories. Users can view and record the fastest funneling times, highest average funneling speeds, and highest maximum speeds achieved during beer funneling activities.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application that follows the
-[simple app state management
-tutorial](https://flutter.dev/docs/development/data-and-backend/state-mgmt/simple).
-
-For help getting started with Flutter development, view the
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
-## Assets
-
-The `assets` directory houses images, fonts, and any other files you want to
-include with your application.
-
-The `assets/images` directory contains [resolution-aware
-images](https://flutter.dev/docs/development/ui/assets-and-images#resolution-aware).
-
-## Localization
-
-This project generates localized messages based on arb files found in
-the `lib/src/localization` directory.
-
-To support additional languages, please visit the tutorial on
-[Internationalizing Flutter
-apps](https://flutter.dev/docs/development/accessibility-and-localization/internationalization)
+- Display the latest funneling activity with detailed statistics.
+- View highscores in the following categories:
+  - Fastest Funneling Time
+  - Highest Average Funneling Speed
+  - Highest Maximum Funneling Speed
+- Record and update highscores for each category.
+- User-friendly interface for easy navigation.
