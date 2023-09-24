@@ -1,0 +1,186 @@
+// ignore_for_file: avoid_print
+
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:trichterapp/src/dart/websocketmanager.dart';
+import 'package:wifi_iot/wifi_iot.dart';
+import 'package:wifi_scan/wifi_scan.dart';
+
+WebSocketManager webSocketManager = WebSocketManager();
+
+class TrichterConnectButton extends StatefulWidget {
+  const TrichterConnectButton({super.key});
+
+  @override
+  State<TrichterConnectButton> createState() => _TrichterConnectButtonState();
+}
+
+class _TrichterConnectButtonState extends State<TrichterConnectButton> {
+  bool isDiscovering = false;
+
+  bool isTrichterFound = false;
+  bool isWifiEnabled = false;
+  bool _isConnectedToTrichter = false;
+  StreamSubscription<List<WiFiAccessPoint>>? subscription;
+  List<WiFiAccessPoint> accessPoints = [];
+
+  final String _ssid = "Trichter";
+  final String _password = "12345678";
+  Future<bool> connect() async {
+    try {
+      setState(() {
+        isDiscovering = true;
+      });
+      bool isWifiEnabled = await WiFiForIoTPlugin.isEnabled();
+      if (!isWifiEnabled) {
+        print("Enabling WiFi");
+        await WiFiForIoTPlugin.setEnabled(true);
+      }
+      isWifiEnabled = await WiFiForIoTPlugin.isEnabled();
+      if (isWifiEnabled) {
+        print("WiFi is already enabled");
+        // check if connected To ssid
+        String? currentSsid = await WiFiForIoTPlugin.getSSID();
+        if (currentSsid == _ssid) {
+          print("Already connected to Trichter");
+          if (!webSocketManager.isConnected) {
+            webSocketManager.initializeWebSocket();
+          }
+          if (mounted) {
+            setState(() {
+              isDiscovering = false;
+              _isConnectedToTrichter = true;
+              isWifiEnabled = true;
+              isTrichterFound = true;
+            });
+          }
+          return true;
+        } else {
+          print("Checking for SSID nearby");
+
+          final can =
+              await WiFiScan.instance.canStartScan(askPermissions: true);
+          if (can == CanStartScan.yes) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text('Suche nach Trichter'),
+              ),
+            );
+            // start full scan async-ly
+            final isScanning = await WiFiScan.instance.startScan();
+            if (isScanning) {
+              // get scan result
+              final can = await WiFiScan.instance
+                  .canGetScannedResults(askPermissions: true);
+              if (can == CanGetScannedResults.yes) {
+                subscription = WiFiScan.instance.onScannedResultsAvailable
+                    .listen((results) {
+                  // update accessPoints
+                  print("Scan results: $results");
+                  // check if ssid is in results
+                  for (var accessPoint in results) {
+                    if (accessPoint.ssid == _ssid) {
+                      print("Found Trichter");
+                      isTrichterFound = true;
+                      // connect to ssid
+                      WiFiForIoTPlugin.connect(_ssid,
+                              password: _password,
+                              security: NetworkSecurity.WPA)
+                          .then((value) {
+                        print("Connected to Trichter");
+                        webSocketManager.initializeWebSocket();
+                        if (mounted) {
+                          setState(() {
+                            isDiscovering = false;
+                            _isConnectedToTrichter = true;
+                            isWifiEnabled = true;
+                            isTrichterFound = true;
+                          });
+                        }
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text('Verbunden mit Trichter'),
+                            showCloseIcon: true,
+                          ),
+                        );
+                      });
+                    }
+                  }
+
+                  setState(() => accessPoints = results);
+                });
+              }
+            }
+          }
+        }
+      } else {
+        print("WiFi could not be enabled");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text(
+                'WLAN musste erst aktiviert werden. Bitte nochmal versuchen'),
+          ),
+        );
+        if (mounted) {
+          setState(() {
+            isDiscovering = false;
+            _isConnectedToTrichter = false;
+            isWifiEnabled = false;
+            isTrichterFound = false;
+          });
+        }
+      }
+      return false;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    connect();
+  }
+
+  // make sure to cancel subscription after you are done
+  @override
+  dispose() {
+    super.dispose();
+    subscription?.cancel();
+  }
+
+  Icon getIcon() {
+    if (_isConnectedToTrichter) {
+      return const Icon(Icons.wifi);
+    } else if (isTrichterFound) {
+      return const Icon(Icons.network_check);
+    } else if (_isConnectedToTrichter) {
+      return const Icon(Icons.wifi);
+    } else if (isWifiEnabled) {
+      return const Icon(Icons.wifi_find);
+    } else if (!isWifiEnabled) {
+      return const Icon(Icons.wifi_off);
+    } else {
+      return const Icon(Icons.signal_wifi_statusbar_null);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return isDiscovering
+        ? FittedBox(
+            child: Container(
+              margin: const EdgeInsets.all(16.0),
+              child: const CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
+            ),
+          )
+        : IconButton(
+            icon: getIcon(),
+            onPressed: connect,
+          );
+  }
+}
