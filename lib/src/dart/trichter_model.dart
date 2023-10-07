@@ -50,11 +50,33 @@ class TrichterModel {
   // berechne Liter aus der Zeit und der Geschwindigkeit in l/s
   void berechneLiter() {
     if (trichterData.isEmpty) {
-      mengeInLiter = 0;
+      this.mengeInLiter = 0;
       return;
     }
-    double summeDurchfluss = trichterData.values.reduce((a, b) => a + b);
-    mengeInLiter = (summeDurchfluss * dauerInMs) / 1000;
+
+    // Initialisiere die Menge in Litern mit 0.
+    double mengeInLiter = 0;
+
+    // Iteriere durch die Map.
+    int letzteZeitpunkt = -1;
+    trichterData.forEach((zeitpunkt, durchfluss) {
+      if (letzteZeitpunkt != -1) {
+        // Berechne die vergangene Zeit in Sekunden (von ms in s umrechnen).
+        double vergangeneZeitInSekunden =
+            (zeitpunkt - letzteZeitpunkt) / 1000.0;
+
+        // Berechne die Menge in Litern, die in dieser Zeitspanne geflossen ist.
+        double mengeInDieserZeitspanne =
+            durchfluss * vergangeneZeitInSekunden / 60.0; // von L/min zu L
+
+        // Addiere die Menge zur Gesamtmenge hinzu.
+        mengeInLiter += mengeInDieserZeitspanne;
+      }
+      letzteZeitpunkt = zeitpunkt;
+    });
+
+    // Setze die berechnete Menge in die entsprechende Variable.
+    this.mengeInLiter = mengeInLiter;
   }
 
   void berechneMaxGeschwindigkeit() {

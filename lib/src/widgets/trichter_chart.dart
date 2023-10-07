@@ -114,8 +114,8 @@ class _TrichterChartState extends State<TrichterChart> {
       gridData: FlGridData(
         show: true,
         drawVerticalLine: true,
-        horizontalInterval: 1,
-        verticalInterval: 10,
+        horizontalInterval: 2,
+        verticalInterval: 100,
         getDrawingHorizontalLine: (value) {
           return const FlLine(
             color: Color.fromARGB(255, 11, 244, 3),
@@ -129,27 +129,29 @@ class _TrichterChartState extends State<TrichterChart> {
           );
         },
       ),
-      titlesData: const FlTitlesData(
+      titlesData: FlTitlesData(
         show: true,
-        rightTitles: AxisTitles(
+        rightTitles: const AxisTitles(
           sideTitles: SideTitles(showTitles: false),
         ),
-        topTitles: AxisTitles(
+        topTitles: const AxisTitles(
           sideTitles: SideTitles(showTitles: false),
         ),
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
             reservedSize: 30,
-            interval: 5,
-
-            //getTitlesWidget: bottomTitleWidgets,
+            interval: 500,
+            getTitlesWidget: (value, meta) {
+              // ms to s
+              return Text("${(value / 1000).toStringAsFixed(1)}s");
+            },
           ),
         ),
-        leftTitles: AxisTitles(
+        leftTitles: const AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            interval: 1,
+            interval: 4,
             // getTitlesWidget: leftTitleWidgets,
             reservedSize: 42,
           ),

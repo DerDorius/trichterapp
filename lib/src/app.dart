@@ -29,6 +29,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   Map<int, double> _liveTrichterData = {};
+  String liveTrichterUuid = "";
   StreamSubscription? subscription;
   WebSocketManager webSocketManager = WebSocketManager();
 
@@ -52,7 +53,7 @@ class _MyAppState extends State<MyApp> {
               _liveTrichterData = _liveTrichterData;
             });
             //print(liveTrichterData.length.toString());
-          } else if (jsonMessage["type"] == "resetlivetrichter") {
+          } else if (jsonMessage["type"] == "startlivetrichter") {
             _liveTrichterData.clear();
             setState(() {
               _liveTrichterData = _liveTrichterData;
@@ -128,7 +129,9 @@ class _MyAppState extends State<MyApp> {
                     return SettingsView(controller: widget.settingsController);
                   case TrichterDetail.routeName:
                     return TrichterDetail(
-                        liveTrichterData: _liveTrichterData, isLive: true);
+                        liveTrichterData: _liveTrichterData,
+                        liveTrichterUuid: liveTrichterUuid,
+                        isLive: true);
                   case DiscoveryPage.routeName:
                     return const DiscoveryPage();
                   case ChatPage.routeName:

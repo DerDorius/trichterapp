@@ -98,12 +98,15 @@ class _TrichterConnectButtonState extends State<TrichterConnectButton> {
                             isTrichterFound = true;
                           });
                         }
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Verbunden mit Trichter'),
-                            showCloseIcon: true,
-                          ),
-                        );
+                        // only when mounted
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Verbunden mit Trichter'),
+                              showCloseIcon: true,
+                            ),
+                          );
+                        }
                       });
                     }
                   }

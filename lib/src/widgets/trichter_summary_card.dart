@@ -66,7 +66,7 @@ class TrichterSummaryCard extends StatelessWidget {
                         ),
                         TextSpan(
                           text: trichterName,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 22,
                             decoration: TextDecoration.underline,
                           ),

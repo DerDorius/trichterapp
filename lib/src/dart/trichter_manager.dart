@@ -18,6 +18,7 @@ class TrichterManager with ChangeNotifier {
       debugPrint(res.body);
       debugPrint(res.statusCode.toString());
       if (res.statusCode == 200) {
+        debugPrint(res.body);
         // parse into List
         Map<String, dynamic> trichterMap = jsonDecode(res.body);
         trichterList = [];

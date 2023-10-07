@@ -59,14 +59,14 @@ class StartView extends StatelessWidget {
                   return TrichterSummaryCard(
                     titleText: 'Letzter Trichter von ',
                     trichterName: lastTrichter.name,
-                    dauerText: (lastTrichter.dauerInMs / 1000).toString() + "s",
+                    dauerText: "${lastTrichter.dauerInMs / 1000}s",
                     maxDurchflussText:
                         "${lastTrichter.maxGeschwindigkeit} ml/s",
                     avgDurchflussText: "${lastTrichter.avgDurchfluss} ml/s",
                     mengeText: "${lastTrichter.mengeInLiter} Liter",
                   );
                 }
-                return TrichterSummaryCard(
+                return const TrichterSummaryCard(
                   titleText: 'Kein Trichter vorhanden ',
                   trichterName: "Verbindung?",
                   dauerText: '0 Sekunden',
@@ -234,8 +234,6 @@ class StartView extends StatelessWidget {
                           });
                       print("response status: ${res.statusCode}");
                       print(res.body);
-                      Provider.of<TrichterManager>(context, listen: false)
-                          .getTrichterList();
                     } catch (err) {}
                   },
                   child: const Text("Start Simulation Live Trichter")),

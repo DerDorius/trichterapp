@@ -1,21 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:trichterapp/src/dart/trichter_manager.dart';
+// ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
 import 'package:trichterapp/src/widgets/connect_button.dart'; // Import für die Formatierung der Zahlen
 
-class Scoreboard extends StatelessWidget {
+class Scoreboard extends StatefulWidget {
   static const routeName = "/scoreboard";
 
   const Scoreboard({Key? key}) : super(key: key);
+
+  @override
+  State<Scoreboard> createState() => _ScoreboardState();
+}
+
+class _ScoreboardState extends State<Scoreboard> {
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<TrichterManager>(context, listen: false).getTrichterList();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Smart Trichtern'),
-        actions: [
-          const TrichterConnectButton(),
+        actions: const [
+          TrichterConnectButton(),
         ],
       ),
       body: Padding(
@@ -31,7 +43,7 @@ class Scoreboard extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   child: DataTable(
                     columnSpacing: 16.0, // Spacing zwischen den Spalten
-                    columns: <DataColumn>[
+                    columns: const <DataColumn>[
                       DataColumn(
                         label: Text('Name'),
                         // Hier setzen Sie die Fixbreite für die Spalte "Name"

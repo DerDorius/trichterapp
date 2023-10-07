@@ -14,10 +14,12 @@ class TrichterDetail extends StatefulWidget {
       {super.key,
       required this.liveTrichterData,
       required this.isLive,
+      required this.liveTrichterUuid,
       this.trichterDetail});
   Map<int, double> liveTrichterData;
   bool isLive;
   TrichterDetail? trichterDetail;
+  String liveTrichterUuid;
 
   static const routeName = '/trichter_details';
 
@@ -113,7 +115,7 @@ class _TrichterDetailState extends State<TrichterDetail> {
                 children: [
                   Stat(
                       size: 100,
-                      count: trichterModel.dauerInMs / 10,
+                      count: trichterModel.dauerInMs / 1000,
                       title: "Sekunden"),
                   const Divider(
                     height: 20,
@@ -148,7 +150,7 @@ class _TrichterDetailState extends State<TrichterDetail> {
                   Stat(
                       size: 190,
                       count: trichterModel.avgDurchfluss,
-                      title: "ml/s avg"),
+                      title: "L/s avg"),
                 ],
               ),
             ),
