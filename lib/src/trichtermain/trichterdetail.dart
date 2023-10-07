@@ -5,7 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trichterapp/src/dart/trichter_model.dart';
 import 'package:trichterapp/src/dart/websocketmanager.dart';
 import 'package:trichterapp/src/widgets/connect_button.dart';
-import 'package:http/http.dart' as http;
 import 'package:trichterapp/src/widgets/stat.dart';
 import 'package:trichterapp/src/widgets/trichter_chart.dart';
 
@@ -20,7 +19,7 @@ class TrichterDetail extends StatefulWidget {
   bool isLive;
   TrichterDetail? trichterDetail;
 
-  static const routeName = '/sample_item';
+  static const routeName = '/trichter_details';
 
   @override
   State<TrichterDetail> createState() => _TrichterDetailState();
@@ -153,20 +152,6 @@ class _TrichterDetailState extends State<TrichterDetail> {
                 ],
               ),
             ),
-            ElevatedButton(
-                onPressed: () async {
-                  try {
-                    print("http is sending");
-                    http.Response res = await http.post(
-                        Uri.parse('http://192.168.4.1/starttrichtermock'),
-                        headers: <String, String>{
-                          'Content-Type': 'application/json; charset=UTF-8',
-                        });
-                    print("response status: ${res.statusCode}");
-                    print(res.body);
-                  } catch (err) {}
-                },
-                child: const Text("Simuliere Live Trichter auf Arduino")),
           ],
         ),
       ),

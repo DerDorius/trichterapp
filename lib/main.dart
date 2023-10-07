@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:trichterapp/src/dart/trichter_manager.dart';
 import 'package:trichterapp/src/dart/websocketmanager.dart';
 
 import 'src/app.dart';
@@ -23,6 +25,8 @@ void main() async {
   runApp(DevicePreview(
       enabled: true,
       builder: (context) {
-        return MyApp(settingsController: settingsController);
+        return ChangeNotifierProvider(
+            create: (context) => TrichterManager(),
+            child: MyApp(settingsController: settingsController));
       }));
 }

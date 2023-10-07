@@ -7,6 +7,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:trichterapp/src/chat/chatview.dart';
 import 'package:trichterapp/src/dart/websocketmanager.dart';
 import 'package:trichterapp/src/devicediscovery/discovery_view.dart';
+import 'package:trichterapp/src/trichtermain/scoreboard.dart';
 
 import 'trichtermain/trichterdetail.dart';
 import 'trichtermain/start_view.dart';
@@ -133,6 +134,9 @@ class _MyAppState extends State<MyApp> {
                   case ChatPage.routeName:
                     return const ChatPage();
                   case StartView.routeName:
+                    return const StartView();
+                  case Scoreboard.routeName:
+                    return const Scoreboard();
                   default:
                     return const StartView();
                 }

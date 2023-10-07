@@ -1,17 +1,29 @@
 class TrichterModel {
-  String name = "Nicht Zugeordnet";
-  String uuid = "";
+  String name;
+  String uuid;
 
   // Int ist in ms und double in l/s
   Map<int, double> trichterData = {};
 
-  double mengeInLiter = 0;
-  double maxGeschwindigkeit = 0;
-  double avgDurchfluss = 0;
-  int dauerInMs = 1;
+  double mengeInLiter;
+  double maxGeschwindigkeit;
+  double avgDurchfluss;
+  int dauerInMs;
 
-  bool erfolgreich = true;
-  bool hatGekotzt = false;
+  bool erfolgreich;
+  bool hatGekotzt;
+
+  // konstruktor mit allem:
+  TrichterModel({
+    this.name = "Nicht Zugeordnet",
+    this.uuid = "",
+    this.mengeInLiter = 0,
+    this.maxGeschwindigkeit = 0,
+    this.avgDurchfluss = 0,
+    this.dauerInMs = 1,
+    this.erfolgreich = true,
+    this.hatGekotzt = false,
+  });
 
   void sortiereTrichterData() {
     trichterData = Map.fromEntries(trichterData.entries.toList()

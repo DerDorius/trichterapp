@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:trichterapp/src/dart/trichter_manager.dart';
+import 'package:trichterapp/src/dart/trichter_model.dart';
 import 'package:trichterapp/src/widgets/connect_button.dart';
 import 'package:trichterapp/src/widgets/trichter_summary_card.dart';
+import 'package:http/http.dart' as http;
 
 import '../settings/settings_view.dart';
 import 'sample_item.dart';
@@ -20,7 +24,7 @@ class StartView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Smart Trichtern'),
+          title: const Text('Trichter Liste'),
           actions: [
             const TrichterConnectButton(),
             IconButton(
@@ -46,14 +50,31 @@ class StartView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TrichterSummaryCard(
-                titleText: 'Letzter Trichter von ',
-                trichterName: 'Darius',
-                dauerText: '4.1 Sekunden',
-                maxDurchflussText: '250.0 ml/s',
-                avgDurchflussText: '150.0 ml/s',
-                mengeText: '2.5 Liter',
-              ),
+              Consumer<TrichterManager>(
+                  builder: (context, trichterManager, child) {
+                if (trichterManager.trichterList.isNotEmpty) {
+                  TrichterModel lastTrichter =
+                      trichterManager.trichterList.last;
+
+                  return TrichterSummaryCard(
+                    titleText: 'Letzter Trichter von ',
+                    trichterName: lastTrichter.name,
+                    dauerText: (lastTrichter.dauerInMs / 1000).toString() + "s",
+                    maxDurchflussText:
+                        "${lastTrichter.maxGeschwindigkeit} ml/s",
+                    avgDurchflussText: "${lastTrichter.avgDurchfluss} ml/s",
+                    mengeText: "${lastTrichter.mengeInLiter} Liter",
+                  );
+                }
+                return TrichterSummaryCard(
+                  titleText: 'Kein Trichter vorhanden ',
+                  trichterName: "Verbindung?",
+                  dauerText: '0 Sekunden',
+                  maxDurchflussText: '0.0 ml/s',
+                  avgDurchflussText: '0.0 ml/s',
+                  mengeText: '0 Liter',
+                );
+              }),
               const SizedBox(height: 24.0),
               const Text(
                 'Scoreboards:',
@@ -65,6 +86,7 @@ class StartView extends StatelessWidget {
               const SizedBox(height: 16.0),
               InkWell(
                 onTap: () {
+                  Navigator.restorablePushNamed(context, '/scoreboard');
                   // Hier kannst du zur Schnellster Trichter Seite navigieren.
                 },
                 child: Container(
@@ -200,6 +222,23 @@ class StartView extends StatelessWidget {
                   ),
                 ),
               ),
+              const SizedBox(height: 12.0),
+              ElevatedButton(
+                  onPressed: () async {
+                    try {
+                      print("http is sending");
+                      http.Response res = await http.post(
+                          Uri.parse('http://192.168.4.1/starttrichtermock'),
+                          headers: <String, String>{
+                            'Content-Type': 'application/json; charset=UTF-8',
+                          });
+                      print("response status: ${res.statusCode}");
+                      print(res.body);
+                      Provider.of<TrichterManager>(context, listen: false)
+                          .getTrichterList();
+                    } catch (err) {}
+                  },
+                  child: const Text("Start Simulation Live Trichter")),
             ],
           ),
         ));
