@@ -56,26 +56,43 @@ class TrichterSummaryCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  RichText(
-                    text: TextSpan(
-                      style: const TextStyle(
-                        fontSize: 15.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: titleText,
-                        ),
-                        TextSpan(
-                          text: trichterName,
+                  Row(
+                    children: [
+                      RichText(
+                        text: TextSpan(
                           style: const TextStyle(
-                            fontSize: 22,
-                            decoration: TextDecoration.underline,
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: titleText,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Hero(
+                        tag: "trichterName",
+                        child: RichText(
+                          text: TextSpan(
+                            style: const TextStyle(
+                              fontSize: 15.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: trichterName,
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 12.0),
                   GridView.count(

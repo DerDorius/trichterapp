@@ -39,73 +39,104 @@ class _ScoreboardState extends State<Scoreboard> {
               builder: (context, trichterManager, child) {
                 final trichterList = trichterManager.trichterList;
 
-                return SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: DataTable(
-                    columnSpacing: 16.0, // Spacing zwischen den Spalten
-                    columns: const <DataColumn>[
-                      DataColumn(
-                        label: Text('Name'),
-                        // Hier setzen Sie die Fixbreite für die Spalte "Name"
-                        numeric: false, // Die Spalte ist nicht numerisch
-                      ),
-                      DataColumn(
-                        label: Text('L'),
-                        numeric: true,
-                      ),
-                      DataColumn(
-                        label: Text('Max'),
-                        numeric: true,
-                      ),
-                      DataColumn(
-                        label: Text('Avg'),
-                        numeric: true,
-                      ),
-                      DataColumn(
-                        label: Text('Sek'),
-                        numeric: true,
-                      ),
-                      DataColumn(
-                        label: Text('✅'),
-                        numeric: false,
-                      ),
-                      DataColumn(
-                        label: Text('🤮'),
-                        numeric: false,
-                      ),
-                    ],
-                    rows: trichterList.map((trichter) {
-                      debugPrint("Trichter: ${trichter.uuid}");
-                      return DataRow(
-                        onLongPress: () => Navigator.pushNamed(
-                            context, "/trichter_details",
-                            arguments: trichter.uuid),
-                        cells: <DataCell>[
-                          DataCell(Text(trichter.name),
-                              onTap: () => Navigator.pushNamed(
+                return RefreshIndicator(
+                  onRefresh: () => trichterManager.getTrichterList(),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: RefreshIndicator(
+                        onRefresh: () => trichterManager.getTrichterList(),
+                        child: DataTable(
+                          columnSpacing: 16.0, // Spacing zwischen den Spalten
+                          columns: const <DataColumn>[
+                            DataColumn(
+                              label: Text('Name'),
+                              // Hier setzen Sie die Fixbreite für die Spalte "Name"
+                              numeric: false, // Die Spalte ist nicht numerisch
+                            ),
+                            DataColumn(
+                              label: Text('L'),
+                              numeric: true,
+                            ),
+                            DataColumn(
+                              label: Text('Max'),
+                              numeric: true,
+                            ),
+                            DataColumn(
+                              label: Text('Avg'),
+                              numeric: true,
+                            ),
+                            DataColumn(
+                              label: Text('Sek'),
+                              numeric: true,
+                            ),
+                            DataColumn(
+                              label: Text('✅'),
+                              numeric: false,
+                            ),
+                            DataColumn(
+                              label: Text('🤮'),
+                              numeric: false,
+                            ),
+                          ],
+                          rows: trichterList.map((trichter) {
+                            debugPrint("Trichter: ${trichter.uuid}");
+                            return DataRow(
+                              onLongPress: () => Navigator.pushNamed(
                                   context, "/trichter_details",
-                                  arguments: trichter.uuid)),
-                          DataCell(Text(
-                            NumberFormat.decimalPattern("de_DE")
-                                .format(trichter.mengeInLiter),
-                          )),
-                          DataCell(Text(
-                            NumberFormat.decimalPattern("de_DE")
-                                .format(trichter.maxGeschwindigkeit),
-                          )),
-                          DataCell(Text(
-                            NumberFormat.decimalPattern("de_DE")
-                                .format(trichter.avgDurchfluss),
-                          )),
-                          DataCell(Text(
-                            NumberFormat.decimalPattern("de_DE")
-                                .format(trichter.dauerInMs / 1000),
-                          )),
-                          DataCell(Text(trichter.erfolgreich ? "✅" : "❌")),
-                          DataCell(Text(trichter.hatGekotzt ? "✅" : "❌")),
-                        ],
-                      );
-                    }).toList(),
+                                  arguments: trichter.uuid),
+                              cells: <DataCell>[
+                                DataCell(
+                                    Hero(
+                                      tag: "trichterName",
+                                      child: RichText(
+                                        text: TextSpan(
+                                          style: const TextStyle(
+                                            fontSize: 15.0,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                          children: [
+                                            TextSpan(
+                                              text: trichter.name,
+                                              style: const TextStyle(
+                                                fontSize: 15,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    onTap: () => Navigator.pushNamed(
+                                        context, "/trichter_details",
+                                        arguments: trichter.uuid)),
+                                DataCell(Text(
+                                  NumberFormat.decimalPattern("de_DE")
+                                      .format(trichter.mengeInLiter),
+                                )),
+                                DataCell(Text(
+                                  NumberFormat.decimalPattern("de_DE")
+                                      .format(trichter.maxGeschwindigkeit),
+                                )),
+                                DataCell(Text(
+                                  NumberFormat.decimalPattern("de_DE")
+                                      .format(trichter.avgDurchfluss),
+                                )),
+                                DataCell(Text(
+                                  NumberFormat.decimalPattern("de_DE")
+                                      .format(trichter.dauerInMs / 1000),
+                                )),
+                                DataCell(
+                                    Text(trichter.erfolgreich ? "✅" : "❌")),
+                                DataCell(Text(trichter.hatGekotzt ? "✅" : "❌")),
+                              ],
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
                   ),
                 );
               },

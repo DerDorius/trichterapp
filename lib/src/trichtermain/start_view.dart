@@ -4,7 +4,6 @@ import 'package:trichterapp/src/dart/trichter_manager.dart';
 import 'package:trichterapp/src/dart/trichter_model.dart';
 import 'package:trichterapp/src/widgets/connect_button.dart';
 import 'package:trichterapp/src/widgets/trichter_summary_card.dart';
-import 'package:http/http.dart' as http;
 
 import '../settings/settings_view.dart';
 import 'sample_item.dart';
@@ -225,20 +224,6 @@ class StartView extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 12.0),
-              ElevatedButton(
-                  onPressed: () async {
-                    try {
-                      print("http is sending");
-                      http.Response res = await http.post(
-                          Uri.parse('http://192.168.4.1/starttrichtermock'),
-                          headers: <String, String>{
-                            'Content-Type': 'application/json; charset=UTF-8',
-                          });
-                      print("response status: ${res.statusCode}");
-                      print(res.body);
-                    } catch (err) {}
-                  },
-                  child: const Text("Start Simulation Live Trichter")),
             ],
           ),
         ));

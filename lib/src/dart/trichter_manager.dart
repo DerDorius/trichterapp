@@ -67,6 +67,7 @@ class TrichterManager with ChangeNotifier {
             break;
           }
         }
+        debugPrint("TrichterData: ${trichterData.toString()}");
         notifyListeners();
       }
     } catch (err) {
@@ -74,7 +75,7 @@ class TrichterManager with ChangeNotifier {
     }
   }
 
-  void getTrichterList() async {
+  Future<void> getTrichterList() async {
     try {
       http.Response res = await http.get(
           Uri.parse('http://192.168.4.1/getAllTrichter'),
@@ -82,8 +83,10 @@ class TrichterManager with ChangeNotifier {
             'Content-Type': 'application/json; charset=UTF-8',
           });
       debugPrint("getTrichterList");
-      debugPrint(res.body);
+
+      print(res.body);
       debugPrint(res.statusCode.toString());
+
       if (res.statusCode == 200) {
         debugPrint(res.body);
         // parse into List
@@ -101,6 +104,7 @@ class TrichterManager with ChangeNotifier {
                 erfolgreich: value["erf"],
                 hatGekotzt: value["kotz"]));
           } catch (err) {
+            debugPrint(value.toString());
             debugPrint("trichter couldnt be parsed");
             debugPrint(err.toString());
           }
@@ -124,5 +128,6 @@ class TrichterManager with ChangeNotifier {
       debugPrint("getTrichterListError");
       debugPrint(err.toString());
     }
+    return;
   }
 }

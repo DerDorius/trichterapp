@@ -36,6 +36,7 @@ class _TrichterDetailState extends State<TrichterDetail> {
   String currentName = "";
   List<String> names = [];
   TrichterModel trichterModel = TrichterModel();
+  bool nameEditMode = false;
 
   @override
   void initState() {
@@ -58,7 +59,8 @@ class _TrichterDetailState extends State<TrichterDetail> {
         if (element.uuid == widget.uuid) {
           trichterModel = element;
           debugPrint("Trichter gefunden ${widget.uuid}");
-          trichterModel.fetchData();
+          Provider.of<TrichterManager>(context, listen: false)
+              .getDetailsForTrichter(widget.uuid);
           currentName = trichterModel.name;
         }
       });
@@ -82,7 +84,7 @@ class _TrichterDetailState extends State<TrichterDetail> {
     if (widget.isLive) {
       trichterModel.trichterData = widget.liveTrichterData;
       trichterModel.berechneAlles();
-    }
+    } else {}
     print('Widget wurde aktualisiert');
   }
 
@@ -94,90 +96,132 @@ class _TrichterDetailState extends State<TrichterDetail> {
         actions: const [TrichterConnectButton()],
       ),
       body: Center(
-        child: Column(
-          children: [
-            Padding(
-                padding: const EdgeInsets.fromLTRB(5, 10, 5, 5),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Name',
-                        ),
-                        onSubmitted: (String value) async {
-                          debugPrint("onSubmitted");
-                          Provider.of<TrichterManager>(context, listen: false)
-                              .editTrichter(
-                                  trichterModel.uuid,
-                                  value,
-                                  trichterModel.hatGekotzt,
-                                  trichterModel.erfolgreich);
+        child: Consumer<TrichterManager>(
+            builder: (context, trichterManager, child) {
+          return Column(
+            children: [
+              Padding(
+                  padding: const EdgeInsets.fromLTRB(5, 10, 5, 5),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: nameEditMode
+                            ? TextField(
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: 'Name',
+                                ),
+                                controller:
+                                    TextEditingController(text: currentName),
+                                onSubmitted: (String value) async {
+                                  debugPrint("onSubmitted");
+                                  Provider.of<TrichterManager>(context,
+                                          listen: false)
+                                      .editTrichter(
+                                          trichterModel.uuid,
+                                          value,
+                                          trichterModel.hatGekotzt,
+                                          trichterModel.erfolgreich);
 
+                                  setState(() {
+                                    currentName = value;
+                                  });
+                                },
+                              )
+                            : Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(20.0, 0, 0, 0),
+                                child: Hero(
+                                  tag: "trichterName",
+                                  child: RichText(
+                                    text: TextSpan(
+                                      style: const TextStyle(
+                                        fontSize: 15.0,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                      children: [
+                                        TextSpan(
+                                          text: currentName,
+                                          style: const TextStyle(
+                                            fontSize: 22,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                      ),
+                      IconButton(
+                        icon: nameEditMode
+                            ? const Icon(Icons.check)
+                            : const Icon(Icons.edit), // Benutzer-Icon
+                        onPressed: () {
                           setState(() {
-                            currentName = value;
+                            nameEditMode = !nameEditMode;
                           });
+                          // Die Aktion, die bei einem Klick auf den IconButton ausgeführt werden soll
                         },
                       ),
+                      IconButton(
+                        icon: const Icon(Icons.person_search), // Benutzer-Icon
+                        onPressed: () {
+                          // Die Aktion, die bei einem Klick auf den IconButton ausgeführt werden soll
+                        },
+                      ),
+                    ],
+                  )),
+              TrichterChart(trichterData: trichterModel.trichterData),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Stat(
+                        size: 100,
+                        count: trichterModel.dauerInMs / 1000,
+                        title: "Sekunden"),
+                    const Divider(
+                      height: 20,
+                      thickness: 5,
+                      indent: 20,
+                      endIndent: 0,
+                      color: Colors.red,
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.person_search), // Benutzer-Icon
-                      onPressed: () {
-                        // Die Aktion, die bei einem Klick auf den IconButton ausgeführt werden soll
-                      },
-                    ),
+                    Stat(
+                        size: 190,
+                        count: trichterModel.maxGeschwindigkeit,
+                        title: "ml/s max"),
                   ],
-                )),
-            TrichterChart(trichterData: trichterModel.trichterData),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Stat(
-                      size: 100,
-                      count: trichterModel.dauerInMs / 1000,
-                      title: "Sekunden"),
-                  const Divider(
-                    height: 20,
-                    thickness: 5,
-                    indent: 20,
-                    endIndent: 0,
-                    color: Colors.red,
-                  ),
-                  Stat(
-                      size: 190,
-                      count: trichterModel.maxGeschwindigkeit,
-                      title: "ml/s max"),
-                ],
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Stat(
-                      size: 100,
-                      count: trichterModel.mengeInLiter,
-                      title: "Liter"),
-                  const Divider(
-                    height: 20,
-                    thickness: 5,
-                    indent: 20,
-                    endIndent: 0,
-                    color: Colors.red,
-                  ),
-                  Stat(
-                      size: 190,
-                      count: trichterModel.avgDurchfluss,
-                      title: "L/s avg"),
-                ],
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Stat(
+                        size: 100,
+                        count: trichterModel.mengeInLiter,
+                        title: "Liter"),
+                    const Divider(
+                      height: 20,
+                      thickness: 5,
+                      indent: 20,
+                      endIndent: 0,
+                      color: Colors.red,
+                    ),
+                    Stat(
+                        size: 190,
+                        count: trichterModel.avgDurchfluss,
+                        title: "L/s avg"),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          );
+        }),
       ),
     );
   }

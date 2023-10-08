@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:trichterapp/src/devicediscovery/discovery_view.dart';
+import 'package:http/http.dart' as http;
 
 import 'settings_controller.dart';
 
@@ -52,18 +52,20 @@ class SettingsView extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             //child: DeviceList(),
-            child: ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.restorablePushNamed(
-                    context,
-                    DiscoveryPage.routeName,
-                  );
+            child: ElevatedButton(
+                onPressed: () async {
+                  try {
+                    print("http is sending");
+                    http.Response res = await http.post(
+                        Uri.parse('http://192.168.4.1/starttrichtermock'),
+                        headers: <String, String>{
+                          'Content-Type': 'application/json; charset=UTF-8',
+                        });
+                    print("response status: ${res.statusCode}");
+                    print(res.body);
+                  } catch (err) {}
                 },
-                icon: const Icon(Icons.bluetooth),
-                // full width button
-                style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50)),
-                label: const Text("Trichter Suchen")),
+                child: const Text("Start Simulation Live Trichter")),
           ),
         ],
       ),

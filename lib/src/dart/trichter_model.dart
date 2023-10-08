@@ -99,32 +99,4 @@ class TrichterModel {
     berechneAvgDurchfluss();
     berechneMaxGeschwindigkeit();
   }
-
-  void fetchData() async {
-    // Hole die Daten vom Server
-    try {
-      debugPrint("UUDI: ");
-      debugPrint(uuid);
-      http.Response res = await http.get(
-          Uri.parse('http://192.168.4.1/getTrichterDetails?uuid=${this.uuid}'),
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
-          });
-      debugPrint(res.body.toString());
-      if (res.statusCode == 200) {
-        // parse into List
-        trichterData.clear();
-
-        List<dynamic> data = jsonDecode(res.body);
-        data.forEach((value) {
-          if (value["t"] != null) {
-            trichterData
-                .addEntries([MapEntry<int, double>(value["t"], value["d"])]);
-          }
-        });
-      }
-    } catch (err) {
-      debugPrint(err.toString());
-    }
-  }
 }
