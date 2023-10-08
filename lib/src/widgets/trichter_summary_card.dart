@@ -7,9 +7,11 @@ class TrichterSummaryCard extends StatelessWidget {
   final String maxDurchflussText;
   final String avgDurchflussText;
   final String mengeText;
+  final String uuid;
 
   const TrichterSummaryCard({
     Key? key,
+    required this.uuid,
     required this.titleText,
     required this.trichterName,
     required this.dauerText,
@@ -46,7 +48,8 @@ class TrichterSummaryCard extends StatelessWidget {
                 .splashFactory, // Use the default InkRipple splash factory
             onTap: () {
               // Your onTap action here
-              Navigator.restorablePushNamed(context, '/trichter_details');
+              Navigator.restorablePushNamed(context, '/trichter_details',
+                  arguments: uuid);
             },
             child: Padding(
               padding: const EdgeInsets.all(16.0),

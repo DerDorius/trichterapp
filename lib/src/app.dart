@@ -128,10 +128,12 @@ class _MyAppState extends State<MyApp> {
                   case SettingsView.routeName:
                     return SettingsView(controller: widget.settingsController);
                   case TrichterDetail.routeName:
+                    String uuid = routeSettings.arguments as String;
+                    debugPrint("UUID: $uuid");
                     return TrichterDetail(
                         liveTrichterData: _liveTrichterData,
-                        liveTrichterUuid: liveTrichterUuid,
-                        isLive: true);
+                        uuid: uuid == "" ? liveTrichterUuid : uuid,
+                        isLive: uuid == "");
                   case DiscoveryPage.routeName:
                     return const DiscoveryPage();
                   case ChatPage.routeName:

@@ -58,6 +58,7 @@ class StartView extends StatelessWidget {
 
                   return TrichterSummaryCard(
                     titleText: 'Letzter Trichter von ',
+                    uuid: lastTrichter.uuid,
                     trichterName: lastTrichter.name,
                     dauerText: "${lastTrichter.dauerInMs / 1000}s",
                     maxDurchflussText:
@@ -67,6 +68,7 @@ class StartView extends StatelessWidget {
                   );
                 }
                 return const TrichterSummaryCard(
+                  uuid: "",
                   titleText: 'Kein Trichter vorhanden ',
                   trichterName: "Verbindung?",
                   dauerText: '0 Sekunden',

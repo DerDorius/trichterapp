@@ -75,9 +75,16 @@ class _ScoreboardState extends State<Scoreboard> {
                       ),
                     ],
                     rows: trichterList.map((trichter) {
+                      debugPrint("Trichter: ${trichter.uuid}");
                       return DataRow(
+                        onLongPress: () => Navigator.pushNamed(
+                            context, "/trichter_details",
+                            arguments: trichter.uuid),
                         cells: <DataCell>[
-                          DataCell(Text(trichter.name)),
+                          DataCell(Text(trichter.name),
+                              onTap: () => Navigator.pushNamed(
+                                  context, "/trichter_details",
+                                  arguments: trichter.uuid)),
                           DataCell(Text(
                             NumberFormat.decimalPattern("de_DE")
                                 .format(trichter.mengeInLiter),

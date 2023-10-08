@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:trichterapp/src/dart/trichter_manager.dart';
 import 'package:trichterapp/src/dart/trichter_model.dart';
 import 'package:trichterapp/src/dart/websocketmanager.dart';
 import 'package:trichterapp/src/widgets/connect_button.dart';
@@ -14,12 +16,12 @@ class TrichterDetail extends StatefulWidget {
       {super.key,
       required this.liveTrichterData,
       required this.isLive,
-      required this.liveTrichterUuid,
+      required this.uuid,
       this.trichterDetail});
   Map<int, double> liveTrichterData;
-  bool isLive;
   TrichterDetail? trichterDetail;
-  String liveTrichterUuid;
+  String uuid;
+  bool isLive;
 
   static const routeName = '/trichter_details';
 
@@ -45,6 +47,22 @@ class _TrichterDetailState extends State<TrichterDetail> {
         receivedMessage += message;
       });
     });
+
+    if (!widget.isLive) {
+      // hol aus der trichterliste den trichter mit der uuid
+      // und setze ihn als trichterDetail
+
+      Provider.of<TrichterManager>(context, listen: false)
+          .trichterList
+          .forEach((element) {
+        if (element.uuid == widget.uuid) {
+          trichterModel = element;
+          debugPrint("Trichter gefunden ${widget.uuid}");
+          trichterModel.fetchData();
+          currentName = trichterModel.name;
+        }
+      });
+    }
 
     SharedPreferences.getInstance().then((value) => {
           if (mounted)
@@ -72,7 +90,7 @@ class _TrichterDetailState extends State<TrichterDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Trichter Details'),
+        title: Text(widget.isLive ? "Live Trichter" : 'Trichter Details'),
         actions: const [TrichterConnectButton()],
       ),
       body: Center(
@@ -89,10 +107,14 @@ class _TrichterDetailState extends State<TrichterDetail> {
                           labelText: 'Name',
                         ),
                         onSubmitted: (String value) async {
-                          final SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
-                          names.add(value);
-                          prefs.setStringList("names", names);
+                          debugPrint("onSubmitted");
+                          Provider.of<TrichterManager>(context, listen: false)
+                              .editTrichter(
+                                  trichterModel.uuid,
+                                  value,
+                                  trichterModel.hatGekotzt,
+                                  trichterModel.erfolgreich);
+
                           setState(() {
                             currentName = value;
                           });
@@ -107,7 +129,7 @@ class _TrichterDetailState extends State<TrichterDetail> {
                     ),
                   ],
                 )),
-            TrichterChart(trichterData: widget.liveTrichterData),
+            TrichterChart(trichterData: trichterModel.trichterData),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
