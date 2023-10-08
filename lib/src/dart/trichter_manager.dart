@@ -36,6 +36,44 @@ class TrichterManager with ChangeNotifier {
     }
   }
 
+  void getDetailsForTrichter(String uuid) async {
+    // Hole die Daten vom Server
+    Map<int, double> trichterData = {};
+
+    try {
+      http.Response res = await http.get(
+          Uri.parse('http://192.168.4.1/getTrichterDetails?uuid=${uuid}'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          });
+      debugPrint(res.body.toString());
+      if (res.statusCode == 200) {
+        // parse into List
+        trichterData.clear();
+
+        List<dynamic> data = jsonDecode(res.body);
+        for (var value in data) {
+          if (value["t"] != null) {
+            trichterData
+                .addEntries([MapEntry<int, double>(value["t"], value["d"])]);
+          }
+        }
+
+        // put list into trichterModel
+        for (var element in trichterList) {
+          if (element.uuid == uuid) {
+            element.trichterData = trichterData;
+            element.berechneAlles();
+            break;
+          }
+        }
+        notifyListeners();
+      }
+    } catch (err) {
+      debugPrint(err.toString());
+    }
+  }
+
   void getTrichterList() async {
     try {
       http.Response res = await http.get(

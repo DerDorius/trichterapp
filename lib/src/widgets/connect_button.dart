@@ -110,8 +110,9 @@ class _TrichterConnectButtonState extends State<TrichterConnectButton> {
                       });
                     }
                   }
-
-                  setState(() => accessPoints = results);
+                  if (mounted) {
+                    setState(() => accessPoints = results);
+                  }
                 });
               }
             }
