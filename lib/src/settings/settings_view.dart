@@ -55,17 +55,14 @@ class SettingsView extends StatelessWidget {
             child: ElevatedButton(
                 onPressed: () async {
                   try {
-                    print("http is sending");
                     http.Response res = await http.post(
                         Uri.parse('http://192.168.4.1/starttrichtermock'),
                         headers: <String, String>{
                           'Content-Type': 'application/json; charset=UTF-8',
                         });
-                    print("response status: ${res.statusCode}");
-                    print(res.body);
                   } catch (err) {}
                 },
-                child: const Text("Start Simulation Live Trichter")),
+                child: const Text("Alle Trichter Löschen")),
           ),
         ],
       ),

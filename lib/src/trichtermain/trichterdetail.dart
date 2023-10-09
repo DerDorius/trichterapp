@@ -1,11 +1,8 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trichterapp/src/dart/trichter_manager.dart';
 import 'package:trichterapp/src/dart/trichter_model.dart';
-import 'package:trichterapp/src/dart/websocketmanager.dart';
 import 'package:trichterapp/src/widgets/connect_button.dart';
 import 'package:trichterapp/src/widgets/stat.dart';
 import 'package:trichterapp/src/widgets/trichter_chart.dart';
@@ -31,8 +28,6 @@ class TrichterDetail extends StatefulWidget {
 
 class _TrichterDetailState extends State<TrichterDetail> {
   String receivedMessage = "";
-  StreamSubscription? subscription;
-  WebSocketManager webSocketManager = WebSocketManager();
   String currentName = "";
   List<String> names = [];
   TrichterModel trichterModel = TrichterModel();
@@ -41,13 +36,6 @@ class _TrichterDetailState extends State<TrichterDetail> {
   @override
   void initState() {
     super.initState();
-
-    // Subscribe to the message stream
-    subscription = webSocketManager.messageStream.listen((message) {
-      setState(() {
-        receivedMessage += message;
-      });
-    });
 
     if (!widget.isLive) {
       // hol aus der trichterliste den trichter mit der uuid
@@ -64,6 +52,10 @@ class _TrichterDetailState extends State<TrichterDetail> {
           currentName = trichterModel.name;
         }
       });
+    } else {
+      trichterModel.trichterData = widget.liveTrichterData;
+      trichterModel.berechneAlles();
+      currentName = "Live Trichter";
     }
 
     SharedPreferences.getInstance().then((value) => {
@@ -132,7 +124,7 @@ class _TrichterDetailState extends State<TrichterDetail> {
                                 padding:
                                     const EdgeInsets.fromLTRB(20.0, 0, 0, 0),
                                 child: Hero(
-                                  tag: "trichterName",
+                                  tag: "${trichterModel.uuid}trichterName",
                                   child: RichText(
                                     text: TextSpan(
                                       style: const TextStyle(
@@ -229,8 +221,6 @@ class _TrichterDetailState extends State<TrichterDetail> {
   @override
   void dispose() {
     // Don't forget to unsubscribe from the message stream when the widget is disposed
-    webSocketManager.messageStream.drain();
-    subscription?.cancel();
     super.dispose();
   }
 }

@@ -4,9 +4,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:trichterapp/src/chat/chatview.dart';
+import 'package:provider/provider.dart';
+import 'package:trichterapp/src/dart/trichter_manager.dart';
 import 'package:trichterapp/src/dart/websocketmanager.dart';
-import 'package:trichterapp/src/devicediscovery/discovery_view.dart';
 import 'package:trichterapp/src/trichtermain/scoreboard.dart';
 
 import 'trichtermain/trichterdetail.dart';
@@ -32,6 +32,7 @@ class _MyAppState extends State<MyApp> {
   String liveTrichterUuid = "";
   StreamSubscription? subscription;
   WebSocketManager webSocketManager = WebSocketManager();
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   void initState() {
@@ -54,14 +55,43 @@ class _MyAppState extends State<MyApp> {
             });
             //print(liveTrichterData.length.toString());
           } else if (jsonMessage["type"] == "startlivetrichter") {
+            liveTrichterUuid = jsonMessage["uuid"];
+
+            if (navigatorKey.currentState != null) {
+              navigatorKey.currentState!
+                  .restorablePushNamed(TrichterDetail.routeName, arguments: "");
+            }
+          } else if (jsonMessage["type"] == "endlivetrichter") {
+            Provider.of<TrichterManager>(context, listen: false)
+                .getTrichterList()
+                .then((value) {
+              if (navigatorKey.currentState != null) {
+                navigatorKey.currentState!.pop();
+
+                navigatorKey.currentState!.restorablePushNamed(
+                    TrichterDetail.routeName,
+                    arguments: jsonMessage["uuid"]);
+              }
+              _liveTrichterData.clear();
+              setState(() {
+                _liveTrichterData = _liveTrichterData;
+              });
+              liveTrichterUuid = "";
+            });
+          } else if (jsonMessage["type"] == "abortlivetrichter") {
             _liveTrichterData.clear();
             setState(() {
               _liveTrichterData = _liveTrichterData;
             });
+            if (navigatorKey.currentState != null) {
+              navigatorKey.currentState!.pop();
+            }
+            liveTrichterUuid = "";
+            // Show message that trichter was aborted
           }
         }
       } catch (e) {
-        debugPrint('Error parsing json message: $message $e');
+        debugPrint('Error: $message $e');
       }
     });
   }
@@ -117,6 +147,7 @@ class _MyAppState extends State<MyApp> {
           theme: ThemeData(),
           darkTheme: ThemeData.dark(),
           themeMode: widget.settingsController.themeMode,
+          navigatorKey: navigatorKey,
 
           // Define a function to handle named routes in order to support
           // Flutter web url navigation and deep linking.
@@ -129,15 +160,11 @@ class _MyAppState extends State<MyApp> {
                     return SettingsView(controller: widget.settingsController);
                   case TrichterDetail.routeName:
                     String uuid = routeSettings.arguments as String;
-                    debugPrint("UUID: $uuid");
                     return TrichterDetail(
                         liveTrichterData: _liveTrichterData,
                         uuid: uuid == "" ? liveTrichterUuid : uuid,
                         isLive: uuid == "");
-                  case DiscoveryPage.routeName:
-                    return const DiscoveryPage();
-                  case ChatPage.routeName:
-                    return const ChatPage();
+
                   case StartView.routeName:
                     return const StartView();
                   case Scoreboard.routeName:

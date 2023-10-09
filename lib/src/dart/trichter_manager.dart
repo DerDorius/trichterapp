@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trichterapp/src/dart/trichter_model.dart';
 import 'package:http/http.dart' as http;
 
@@ -26,9 +27,7 @@ class TrichterManager with ChangeNotifier {
           "gekotzt": gekotzt
         }), */
       );
-      debugPrint("editTrichter");
-      debugPrint(res.body);
-      debugPrint(res.statusCode.toString());
+
       getTrichterList();
     } catch (err) {
       debugPrint("editTrichterError");
@@ -40,18 +39,27 @@ class TrichterManager with ChangeNotifier {
     // Hole die Daten vom Server
     Map<int, double> trichterData = {};
 
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? trichterDetails = prefs.getString(uuid);
+
     try {
-      http.Response res = await http.get(
-          Uri.parse('http://192.168.4.1/getTrichterDetails?uuid=${uuid}'),
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
-          });
-      debugPrint(res.body.toString());
-      if (res.statusCode == 200) {
+      if (trichterDetails == null) {
+        http.Response res = await http.get(
+            Uri.parse('http://192.168.4.1/getTrichterDetails?uuid=$uuid'),
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+            });
+        if (res.statusCode == 200) {
+          trichterDetails = res.body;
+          prefs.setString(uuid, trichterDetails);
+        }
+      }
+      if (trichterDetails != null) {
         // parse into List
         trichterData.clear();
 
-        List<dynamic> data = jsonDecode(res.body);
+        List<dynamic> data = jsonDecode(trichterDetails);
         for (var value in data) {
           if (value["t"] != null) {
             trichterData
@@ -67,7 +75,6 @@ class TrichterManager with ChangeNotifier {
             break;
           }
         }
-        debugPrint("TrichterData: ${trichterData.toString()}");
         notifyListeners();
       }
     } catch (err) {
@@ -76,45 +83,51 @@ class TrichterManager with ChangeNotifier {
   }
 
   Future<void> getTrichterList() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // Otherwise, store the new ThemeMode in memory
+    String trichterString = "{}";
+
     try {
-      http.Response res = await http.get(
-          Uri.parse('http://192.168.4.1/getAllTrichter'),
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
-          });
-      debugPrint("getTrichterList");
-
-      print(res.body);
-      debugPrint(res.statusCode.toString());
-
-      if (res.statusCode == 200) {
-        debugPrint(res.body);
-        // parse into List
-        Map<String, dynamic> trichterMap = jsonDecode(res.body);
-        trichterList = [];
-        trichterMap.forEach((uuid, value) {
-          try {
-            trichterList.add(TrichterModel(
-                uuid: uuid,
-                name: value["name"],
-                mengeInLiter: value["l"],
-                maxGeschwindigkeit: value["max"],
-                avgDurchfluss: value["avg"],
-                dauerInMs: value["ms"],
-                erfolgreich: value["erf"],
-                hatGekotzt: value["kotz"]));
-          } catch (err) {
-            debugPrint(value.toString());
-            debugPrint("trichter couldnt be parsed");
-            debugPrint(err.toString());
-          }
-        });
+      try {
+        http.Response res = await http.get(
+            Uri.parse('http://192.168.4.1/getAllTrichter'),
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+            }).timeout(const Duration(seconds: 2));
+        if (res.statusCode == 200) {
+          trichterString = res.body;
+          prefs.setString("trichterlist", trichterString);
+        }
+      } catch (err) {
+        if (prefs.getString("trichterlist") != null) {
+          trichterString = prefs.getString("trichterlist")!;
+        }
       }
+
+      // parse into List
+      Map<String, dynamic> trichterMap = jsonDecode(trichterString);
+      trichterList = [];
+      trichterMap.forEach((uuid, value) {
+        try {
+          trichterList.add(TrichterModel(
+              uuid: uuid,
+              name: value["name"],
+              mengeInLiter: value["l"],
+              maxGeschwindigkeit: value["max"],
+              avgDurchfluss: value["avg"],
+              dauerInMs: value["ms"],
+              erfolgreich: value["erf"],
+              hatGekotzt: value["kotz"]));
+        } catch (err) {
+          debugPrint(value.toString());
+          debugPrint("trichter couldnt be parsed");
+          debugPrint(err.toString());
+        }
+      });
       // fill trichternames list and sort it
       trichterNamesAndAnzahl = {};
-      List<TrichterModel> sortedList = trichterList;
-      sortedList.sort((a, b) => a.name.compareTo(b.name));
-      for (var element in sortedList) {
+
+      for (var element in trichterList) {
         if (trichterNamesAndAnzahl.containsKey(element.name)) {
           trichterNamesAndAnzahl[element.name] =
               trichterNamesAndAnzahl[element.name]! + 1;

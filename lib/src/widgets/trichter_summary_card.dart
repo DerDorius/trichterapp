@@ -73,7 +73,7 @@ class TrichterSummaryCard extends StatelessWidget {
                         ),
                       ),
                       Hero(
-                        tag: "trichterName",
+                        tag: "${uuid}trichterName",
                         child: RichText(
                           text: TextSpan(
                             style: const TextStyle(
