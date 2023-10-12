@@ -15,7 +15,7 @@ class TrichterManager with ChangeNotifier {
       Uri uri = Uri.parse(
           'http://192.168.4.1/editTrichter?uuid=$uuid&name=$neuerName&erfolgreich=$erfolgreich&gekotzt=$gekotzt');
 
-      http.Response res = await http.post(
+      await http.post(
         uri,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',

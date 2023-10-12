@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 
@@ -23,8 +24,8 @@ class WebSocketManager {
   void initializeWebSocket() async {
     String? currentSsid = await WiFiForIoTPlugin.getSSID();
     if (currentSsid == "Trichter") {
-      print("Already connected to Trichter");
-      print("INITIALIEIRERRe WS");
+      debugPrint("Already connected to Trichter");
+      debugPrint("INITIALIEIRERRe WS");
 
       _channel = IOWebSocketChannel.connect('ws://192.168.4.1:80/ws');
       try {
@@ -43,7 +44,7 @@ class WebSocketManager {
         });
       } catch (e) {
         // handle exception here
-        print("WebsocketChannel was unable to establishconnection");
+        debugPrint("WebsocketChannel was unable to establishconnection");
       }
     }
   }

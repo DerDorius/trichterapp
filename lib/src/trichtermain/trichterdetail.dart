@@ -32,6 +32,7 @@ class _TrichterDetailState extends State<TrichterDetail> {
   List<String> names = [];
   TrichterModel trichterModel = TrichterModel();
   bool nameEditMode = false;
+  late FocusNode textFieldFocusNode;
 
   @override
   void initState() {

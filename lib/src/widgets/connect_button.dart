@@ -34,16 +34,16 @@ class _TrichterConnectButtonState extends State<TrichterConnectButton> {
       });
       bool isWifiEnabled = await WiFiForIoTPlugin.isEnabled();
       if (!isWifiEnabled) {
-        print("Enabling WiFi");
+        debugPrint("Enabling WiFi");
         await WiFiForIoTPlugin.setEnabled(true);
       }
       isWifiEnabled = await WiFiForIoTPlugin.isEnabled();
       if (isWifiEnabled) {
-        print("WiFi is already enabled");
+        debugPrint("WiFi is already enabled");
         // check if connected To ssid
         String? currentSsid = await WiFiForIoTPlugin.getSSID();
         if (currentSsid == _ssid) {
-          print("Already connected to Trichter");
+          debugPrint("Already connected to Trichter");
           if (!webSocketManager.isConnected) {
             webSocketManager.initializeWebSocket();
           }
@@ -57,7 +57,7 @@ class _TrichterConnectButtonState extends State<TrichterConnectButton> {
           }
           return true;
         } else {
-          print("Checking for SSID nearby");
+          debugPrint("Checking for SSID nearby");
 
           final can =
               await WiFiScan.instance.canStartScan(askPermissions: true);
@@ -77,18 +77,18 @@ class _TrichterConnectButtonState extends State<TrichterConnectButton> {
                 subscription = WiFiScan.instance.onScannedResultsAvailable
                     .listen((results) {
                   // update accessPoints
-                  print("Scan results: $results");
+                  debugPrint("Scan results: $results");
                   // check if ssid is in results
                   for (var accessPoint in results) {
                     if (accessPoint.ssid == _ssid) {
-                      print("Found Trichter");
+                      debugPrint("Found Trichter");
                       isTrichterFound = true;
                       // connect to ssid
                       WiFiForIoTPlugin.connect(_ssid,
                               password: _password,
                               security: NetworkSecurity.WPA)
                           .then((value) {
-                        print("Connected to Trichter");
+                        debugPrint("Connected to Trichter");
                         webSocketManager.initializeWebSocket();
                         if (mounted) {
                           setState(() {
@@ -119,7 +119,7 @@ class _TrichterConnectButtonState extends State<TrichterConnectButton> {
           }
         }
       } else {
-        print("WiFi could not be enabled");
+        debugPrint("WiFi could not be enabled");
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
@@ -137,7 +137,7 @@ class _TrichterConnectButtonState extends State<TrichterConnectButton> {
       }
       return false;
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
       return false;
     }
   }

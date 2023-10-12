@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:wifi_iot/wifi_iot.dart';
 import 'package:wifi_scan/wifi_scan.dart';
 
@@ -8,17 +9,17 @@ Future<bool> connectToTrichter() async {
   bool isConnectedToTrichter = false;
   bool isWifiEnabled = await WiFiForIoTPlugin.isEnabled();
   if (!isWifiEnabled) {
-    print("Enabling WiFi");
+    debugPrint("Enabling WiFi");
     await WiFiForIoTPlugin.setEnabled(true);
   } else {
-    print("WiFi is already enabled");
+    debugPrint("WiFi is already enabled");
     // check if connected To ssid
     String? currentSsid = await WiFiForIoTPlugin.getSSID();
     if (currentSsid == _ssid) {
-      print("Already connected to Trichter");
+      debugPrint("Already connected to Trichter");
       return true;
     } else {
-      print("Checking for SSID nearby");
+      debugPrint("Checking for SSID nearby");
 
       final can = await WiFiScan.instance.canStartScan(askPermissions: true);
       if (can == CanStartScan.yes) {
@@ -30,7 +31,7 @@ Future<bool> connectToTrichter() async {
               .canGetScannedResults(askPermissions: true);
           if (can == CanGetScannedResults.yes) {
             final results = await WiFiScan.instance.getScannedResults();
-            print("Scan results: $results");
+            debugPrint("Scan results: $results");
           }
         }
       }
