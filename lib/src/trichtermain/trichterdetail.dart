@@ -33,6 +33,7 @@ class _TrichterDetailState extends State<TrichterDetail> {
   TrichterModel trichterModel = TrichterModel();
   bool nameEditMode = false;
   late FocusNode textFieldFocusNode;
+  final nameTextEditingController = TextEditingController();
 
   @override
   void initState() {
@@ -104,22 +105,7 @@ class _TrichterDetailState extends State<TrichterDetail> {
                                   border: OutlineInputBorder(),
                                   labelText: 'Name',
                                 ),
-                                controller:
-                                    TextEditingController(text: currentName),
-                                onSubmitted: (String value) async {
-                                  debugPrint("onSubmitted");
-                                  Provider.of<TrichterManager>(context,
-                                          listen: false)
-                                      .editTrichter(
-                                          trichterModel.uuid,
-                                          value,
-                                          trichterModel.hatGekotzt,
-                                          trichterModel.erfolgreich);
-
-                                  setState(() {
-                                    currentName = value;
-                                  });
-                                },
+                                controller: nameTextEditingController,
                               )
                             : Padding(
                                 padding:
@@ -151,9 +137,22 @@ class _TrichterDetailState extends State<TrichterDetail> {
                             ? const Icon(Icons.check)
                             : const Icon(Icons.edit), // Benutzer-Icon
                         onPressed: () {
+                          if (nameEditMode) {
+                            trichterManager.editTrichter(
+                                widget.uuid,
+                                nameTextEditingController.text,
+                                trichterModel.hatGekotzt,
+                                trichterModel.erfolgreich);
+
+                            setState(() {
+                              currentName = nameTextEditingController.text;
+                            });
+                          }
+
                           setState(() {
                             nameEditMode = !nameEditMode;
                           });
+
                           // Die Aktion, die bei einem Klick auf den IconButton ausgeführt werden soll
                         },
                       ),
