@@ -23,7 +23,7 @@ void main() async {
   // SettingsController for changes, then passes it further down to the
   // SettingsView.
   runApp(DevicePreview(
-      enabled: true,
+      enabled: false,
       builder: (context) {
         return ChangeNotifierProvider(
             create: (context) => TrichterManager(),

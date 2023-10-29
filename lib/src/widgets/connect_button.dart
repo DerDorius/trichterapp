@@ -22,6 +22,7 @@ class _TrichterConnectButtonState extends State<TrichterConnectButton> {
   bool isTrichterFound = false;
   bool isWifiEnabled = false;
   bool _isConnectedToTrichter = false;
+  bool isConnectedToWebSocket = false;
   StreamSubscription<List<WiFiAccessPoint>>? subscription;
   List<WiFiAccessPoint> accessPoints = [];
 
@@ -45,11 +46,14 @@ class _TrichterConnectButtonState extends State<TrichterConnectButton> {
         if (currentSsid == _ssid) {
           debugPrint("Already connected to Trichter");
           if (!webSocketManager.isConnected) {
-            webSocketManager.initializeWebSocket();
+            isConnectedToWebSocket =
+                await webSocketManager.initializeWebSocket();
           }
+
           if (mounted) {
             setState(() {
               isDiscovering = false;
+              isConnectedToWebSocket = webSocketManager.isConnected;
               _isConnectedToTrichter = true;
               isWifiEnabled = true;
               isTrichterFound = true;
@@ -87,12 +91,17 @@ class _TrichterConnectButtonState extends State<TrichterConnectButton> {
                       WiFiForIoTPlugin.connect(_ssid,
                               password: _password,
                               security: NetworkSecurity.WPA)
-                          .then((value) {
+                          .then((value) async {
                         debugPrint("Connected to Trichter");
-                        webSocketManager.initializeWebSocket();
+                        WiFiForIoTPlugin.forceWifiUsage(true);
+
+                        isConnectedToWebSocket =
+                            await webSocketManager.initializeWebSocket();
+
                         if (mounted) {
                           setState(() {
                             isDiscovering = false;
+                            isConnectedToWebSocket = isConnectedToWebSocket;
                             _isConnectedToTrichter = true;
                             isWifiEnabled = true;
                             isTrichterFound = true;
@@ -135,11 +144,22 @@ class _TrichterConnectButtonState extends State<TrichterConnectButton> {
           });
         }
       }
-      return false;
     } catch (e) {
       debugPrint(e.toString());
-      return false;
     }
+    debugPrint("HHALLALLALAOooOO");
+    try {
+      isConnectedToWebSocket = await webSocketManager.initializeWebSocket();
+
+      if (mounted) {
+        setState(() {
+          isConnectedToWebSocket = isConnectedToWebSocket;
+        });
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return isConnectedToWebSocket;
   }
 
   @override
@@ -156,8 +176,10 @@ class _TrichterConnectButtonState extends State<TrichterConnectButton> {
   }
 
   Icon getIcon() {
-    if (_isConnectedToTrichter) {
+    if (_isConnectedToTrichter && isConnectedToWebSocket) {
       return const Icon(Icons.wifi);
+    } else if (_isConnectedToTrichter && !isConnectedToWebSocket) {
+      return const Icon(Icons.signal_wifi_statusbar_connected_no_internet_4);
     } else if (isTrichterFound) {
       return const Icon(Icons.network_check);
     } else if (_isConnectedToTrichter) {

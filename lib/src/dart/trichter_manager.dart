@@ -35,6 +35,24 @@ class TrichterManager with ChangeNotifier {
     }
   }
 
+  void deleteTrichter(String uuid) async {
+    try {
+      Uri uri = Uri.parse('http://192.168.4.1/deleteTrichter?uuid=$uuid');
+
+      await http.post(
+        uri,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      getTrichterList();
+    } catch (err) {
+      debugPrint("editTrichterError");
+      debugPrint(err.toString());
+    }
+  }
+
   void getDetailsForTrichter(String uuid) async {
     // Hole die Daten vom Server
     Map<int, double> trichterData = {};
@@ -114,7 +132,7 @@ class TrichterManager with ChangeNotifier {
               name: value["name"],
               mengeInLiter: value["l"],
               maxGeschwindigkeit: value["max"],
-              avgDurchfluss: value["avg"],
+              avgDurchflussInMl: value["avg"],
               dauerInMs: value["ms"],
               erfolgreich: value["erf"],
               hatGekotzt: value["kotz"]));

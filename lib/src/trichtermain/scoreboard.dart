@@ -15,6 +15,8 @@ class Scoreboard extends StatefulWidget {
 }
 
 class _ScoreboardState extends State<Scoreboard> {
+  static final format = NumberFormat("##0.0#", 'de_DE');
+
   @override
   void initState() {
     super.initState();
@@ -56,15 +58,15 @@ class _ScoreboardState extends State<Scoreboard> {
                             numeric: true,
                           ),
                           DataColumn(
-                            label: Text('Max'),
-                            numeric: true,
-                          ),
-                          DataColumn(
                             label: Text('Avg'),
                             numeric: true,
                           ),
                           DataColumn(
                             label: Text('Sek'),
+                            numeric: true,
+                          ),
+                          DataColumn(
+                            label: Text('Max'),
                             numeric: true,
                           ),
                           DataColumn(
@@ -108,20 +110,16 @@ class _ScoreboardState extends State<Scoreboard> {
                                       context, "/trichter_details",
                                       arguments: trichter.uuid)),
                               DataCell(Text(
-                                NumberFormat.decimalPattern("de_DE")
-                                    .format(trichter.mengeInLiter),
+                                format.format(trichter.mengeInLiter),
                               )),
                               DataCell(Text(
-                                NumberFormat.decimalPattern("de_DE")
-                                    .format(trichter.maxGeschwindigkeit),
+                                format.format(trichter.avgDurchflussInMl),
                               )),
                               DataCell(Text(
-                                NumberFormat.decimalPattern("de_DE")
-                                    .format(trichter.avgDurchfluss),
+                                format.format(trichter.dauerInMs / 1000),
                               )),
                               DataCell(Text(
-                                NumberFormat.decimalPattern("de_DE")
-                                    .format(trichter.dauerInMs / 1000),
+                                format.format(trichter.maxGeschwindigkeit),
                               )),
                               DataCell(Text(trichter.erfolgreich ? "✅" : "❌")),
                               DataCell(Text(trichter.hatGekotzt ? "✅" : "❌")),

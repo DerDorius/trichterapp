@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:trichterapp/src/dart/trichter_manager.dart';
 import 'package:trichterapp/src/dart/trichter_model.dart';
@@ -54,6 +55,7 @@ class StartView extends StatelessWidget {
                 if (trichterManager.trichterList.isNotEmpty) {
                   TrichterModel lastTrichter =
                       trichterManager.trichterList.last;
+                  final format = NumberFormat("##0.00", 'de_DE');
 
                   return TrichterSummaryCard(
                     titleText: 'Letzter Trichter von ',
@@ -61,9 +63,11 @@ class StartView extends StatelessWidget {
                     trichterName: lastTrichter.name,
                     dauerText: "${lastTrichter.dauerInMs / 1000}s",
                     maxDurchflussText:
-                        "${lastTrichter.maxGeschwindigkeit} ml/s",
-                    avgDurchflussText: "${lastTrichter.avgDurchfluss} ml/s",
-                    mengeText: "${lastTrichter.mengeInLiter} Liter",
+                        "${format.format(lastTrichter.maxGeschwindigkeit)} ml/s",
+                    avgDurchflussText:
+                        "${format.format(lastTrichter.avgDurchflussInMl)} ml/s",
+                    mengeText:
+                        "${format.format(lastTrichter.mengeInLiter)} Liter",
                   );
                 }
                 return const TrichterSummaryCard(

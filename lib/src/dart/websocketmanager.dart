@@ -21,7 +21,7 @@ class WebSocketManager {
 
   Stream<String> get messageStream => _messageController.stream;
 
-  void initializeWebSocket() async {
+  Future<bool> initializeWebSocket() async {
     String? currentSsid = await WiFiForIoTPlugin.getSSID();
     if (currentSsid == "Trichter") {
       debugPrint("Already connected to Trichter");
@@ -36,17 +36,24 @@ class WebSocketManager {
         }, onDone: () {
           // Handle disconnection and try to reconnect
           isConnected = false;
+          debugPrint("WS DONE");
           _reconnect();
         }, onError: (error) {
           // Handle error and try to reconnect
           isConnected = false;
+          debugPrint("WS ERROR");
+
           _reconnect();
         });
+        debugPrint("REATURN TRUE");
+        return true;
       } catch (e) {
         // handle exception here
         debugPrint("WebsocketChannel was unable to establishconnection");
+        return false;
       }
     }
+    return false;
   }
 
   void onMessage(String message) {

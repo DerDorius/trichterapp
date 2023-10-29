@@ -6,7 +6,6 @@ const String _ssid = "Trichter";
 const String _password = "12345678";
 
 Future<bool> connectToTrichter() async {
-  bool isConnectedToTrichter = false;
   bool isWifiEnabled = await WiFiForIoTPlugin.isEnabled();
   if (!isWifiEnabled) {
     debugPrint("Enabling WiFi");
