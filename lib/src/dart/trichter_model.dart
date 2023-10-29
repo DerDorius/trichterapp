@@ -106,9 +106,9 @@ class TrichterModel {
       double nachfolgender2 = trichterData[zeitpunkte[i + 2]]!;
       double aktuellerWert = trichterData[zeitpunkte[i]]!;
 
-      if (aktuellerWert > vorheriger1 &&
+      if (aktuellerWert >= vorheriger1 &&
           aktuellerWert > vorheriger2 &&
-          aktuellerWert > nachfolgender1 &&
+          aktuellerWert >= nachfolgender1 &&
           aktuellerWert > nachfolgender2) {
         anzahlSchluecke++;
       }
@@ -127,9 +127,9 @@ class TrichterModel {
       double nachfolgender2 = trichterData[zeitpunkte[i + 2]]!;
       double aktuellerWert = trichterData[zeitpunkte[i]]!;
 
-      if (aktuellerWert < vorheriger1 &&
+      if (aktuellerWert <= vorheriger1 &&
           aktuellerWert < vorheriger2 &&
-          aktuellerWert < nachfolgender1 &&
+          aktuellerWert <= nachfolgender1 &&
           aktuellerWert < nachfolgender2) {
         // Wir haben den Anfang des ersten Tiefpunkts gefunden
         // Berechne die Menge im ersten Tiefpunkt bis zu diesem Zeitpunkt

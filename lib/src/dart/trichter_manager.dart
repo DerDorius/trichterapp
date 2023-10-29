@@ -121,7 +121,7 @@ class TrichterManager with ChangeNotifier {
           trichterString = prefs.getString("trichterlist")!;
         }
       }
-
+      debugPrint(trichterString);
       // parse into List
       Map<String, dynamic> trichterMap = jsonDecode(trichterString);
       trichterList = [];
@@ -133,6 +133,8 @@ class TrichterManager with ChangeNotifier {
               mengeInLiter: value["l"],
               maxGeschwindigkeit: value["max"],
               avgDurchflussInMl: value["avg"],
+              anzahlSchluecke: value["sips"],
+              mengeImErstenSchluckInL: double.parse(value["1Sip"].toString()),
               dauerInMs: value["ms"],
               erfolgreich: value["erf"],
               hatGekotzt: value["kotz"]));

@@ -196,7 +196,7 @@ class _TrichterDetailState extends State<TrichterDetail> {
                           context: context,
                           builder: (BuildContext context) => AlertDialog(
                             title: const Text('Wähle dich!'),
-                            content: Container(
+                            content: SizedBox(
                                 height: 400.0, // Change as per your requirement
                                 width:
                                     300.0, // Change as per your                                 // Verwende SingleChildScrollView anstelle von ListView.

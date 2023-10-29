@@ -63,7 +63,7 @@ class StartView extends StatelessWidget {
                     trichterName: lastTrichter.name,
                     dauerText: "${lastTrichter.dauerInMs / 1000}s",
                     maxDurchflussText:
-                        "${format.format(lastTrichter.maxGeschwindigkeit)} ml/s",
+                        "${format.format(lastTrichter.maxGeschwindigkeit)} L/s",
                     avgDurchflussText:
                         "${format.format(lastTrichter.avgDurchflussInMl)} ml/s",
                     mengeText:
@@ -162,7 +162,7 @@ class StartView extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Höchste Durchschnittliche Trichter Geschwindigkeit',
+                        'Trichter nach Menge',
                         style: TextStyle(
                           fontSize: 20.0,
                           fontWeight: FontWeight.bold,
@@ -184,7 +184,7 @@ class StartView extends StatelessWidget {
               const SizedBox(height: 12.0),
               InkWell(
                 onTap: () {
-                  // Hier kannst du zur Maximalgeschwindigkeit Seite navigieren.
+                  Navigator.restorablePushNamed(context, '/trichteroverview');
                 },
                 child: Container(
                   decoration: BoxDecoration(

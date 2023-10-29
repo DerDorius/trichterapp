@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:trichterapp/src/dart/trichter_manager.dart';
 import 'package:trichterapp/src/dart/websocketmanager.dart';
 import 'package:trichterapp/src/trichtermain/scoreboard.dart';
+import 'package:trichterapp/src/trichtermain/trichter_overview.dart';
 
 import 'trichtermain/trichterdetail.dart';
 import 'trichtermain/start_view.dart';
@@ -169,6 +170,8 @@ class _MyAppState extends State<MyApp> {
                     return const StartView();
                   case Scoreboard.routeName:
                     return const Scoreboard();
+                  case TrichterOverview.routeName:
+                    return const TrichterOverview();
                   default:
                     return const StartView();
                 }
